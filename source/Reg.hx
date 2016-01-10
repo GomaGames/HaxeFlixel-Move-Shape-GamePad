@@ -11,5 +11,6 @@ class Reg
 {
 
   public static inline var MOVE_SPEED = 5; // pixels per frame
+  public static inline var ROTATION_SPEED = 7.5;
 
 }

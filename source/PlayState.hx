@@ -16,7 +16,7 @@ class PlayState extends FlxState
 {
   private static inline var shape_size : Float = 50;
   private var cross_shape : FlxShapeCross;
-  private var shape_velocity : { x : Float, y : Float };
+  private var shape_velocity : { x : Float, y : Float, rotation : Float };
   private var game_pad:FlxGamepad;
 
   /**
@@ -28,7 +28,7 @@ class PlayState extends FlxState
     FlxG.mouse.visible = false;
 
     // initialize shape velocity
-    shape_velocity = { x : 0, y : 0 };
+    shape_velocity = { x : 0, y : 0, rotation : 0 };
 
     // setup and create shape
     var line_style:LineStyle = {
@@ -97,6 +97,9 @@ class PlayState extends FlxState
     // update the shape's position
     cross_shape.x += shape_velocity.x;
     cross_shape.y += shape_velocity.y;
+
+    // update the shape's rotation
+    cross_shape.angle += shape_velocity.rotation;
   }
 
   private inline function updateGamepadMovement():Void
@@ -117,6 +120,26 @@ class PlayState extends FlxState
       shape_velocity.x *= .9; // set to = 0; to stop hard
     }
 
+    /*
+      Rotation Control
+      (this registered as X axis for Logitech)
+     */
+    if ( game_pad.getAxis( LogitechButtonID.RIGHT_ANALOGUE_X ) != 0 ){
+
+      // rotate shape
+      shape_velocity.rotation = Reg.ROTATION_SPEED * game_pad.getXAxis( LogitechButtonID.RIGHT_ANALOGUE_X );
+
+    }else{
+
+      // stop rotating
+      shape_velocity.rotation *= .9; // set to = 0; to stop hard
+
+    }
+
+
+    /*
+      Test button presses
+    */
     if (game_pad.pressed(LogitechButtonID.ONE)) {
       trace("The X button of the Logitech controller is pressed.");
     }
