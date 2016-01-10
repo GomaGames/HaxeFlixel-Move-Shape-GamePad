@@ -33,7 +33,8 @@ class PlayState extends FlxState
     // setup and create shape
     var line_style:LineStyle = {
       color: FlxColor.CHARTREUSE,
-      thickness: 1,
+      thickness: 2,
+      pixelHinting: true
     };
     var fill_style:FillStyle = {
       hasFill: true,
@@ -48,6 +49,9 @@ class PlayState extends FlxState
       line_style,
       fill_style
     );
+
+    // smoothen out with anti-aliasing when rotated (affects performance)
+    cross_shape.antialiasing = true;
 
     // add the shape to this state
     add(cross_shape);
