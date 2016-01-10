@@ -16,6 +16,7 @@ class PlayState extends FlxState
 {
   private static inline var shape_size : Float = 50;
   private var cross_shape : FlxShapeCross;
+  private var shape_velocity : { x : Float, y : Float };
   private var game_pad:FlxGamepad;
 
   /**
@@ -25,6 +26,9 @@ class PlayState extends FlxState
   {
     // Hide the mouse
     FlxG.mouse.visible = false;
+
+    // initialize shape velocity
+    shape_velocity = { x : 0, y : 0 };
 
     // setup and create shape
     var line_style:LineStyle = {
@@ -69,6 +73,16 @@ class PlayState extends FlxState
    */
   override public function update():Void
   {
+
+    handleInput();
+
+    handleAnimation();
+
+    super.update();
+  }
+
+  private inline function handleInput():Void
+  {
     // Important: can be null if there's no active gamepad yet!
     if (game_pad == null) {
       game_pad = FlxG.gamepads.lastActive;
@@ -76,26 +90,32 @@ class PlayState extends FlxState
       updateGamepadMovement();
     }
 
-    super.update();
+  }
+
+  private inline function handleAnimation():Void
+  {
+    // update the shape's position
+    cross_shape.x += shape_velocity.x;
+    cross_shape.y += shape_velocity.y;
   }
 
   private inline function updateGamepadMovement():Void
   {
-    var velocity = { x : 0.0, y : 0.0 };
-
     // Vertical Movement
     if( game_pad.getAxis(LogitechButtonID.LEFT_ANALOGUE_Y) != 0 ){
-      velocity.y = game_pad.getYAxis(LogitechButtonID.LEFT_ANALOGUE_Y) * Reg.MOVE_SPEED;
+      shape_velocity.y = game_pad.getYAxis(LogitechButtonID.LEFT_ANALOGUE_Y) * Reg.MOVE_SPEED;
+    }else{
+      // stop moving vertically
+      shape_velocity.y *= .9; // set to = 0; to stop hard
     }
 
     // Horizontal Movement
     if( game_pad.getAxis(LogitechButtonID.LEFT_ANALOGUE_X) != 0 ){
-      velocity.x = game_pad.getXAxis(LogitechButtonID.LEFT_ANALOGUE_X) * Reg.MOVE_SPEED;
+      shape_velocity.x = game_pad.getXAxis(LogitechButtonID.LEFT_ANALOGUE_X) * Reg.MOVE_SPEED;
+    }else{
+      // stop moving horizontally
+      shape_velocity.x *= .9; // set to = 0; to stop hard
     }
-
-    // update the shape's position
-    cross_shape.x += velocity.x;
-    cross_shape.y += velocity.y;
 
     if (game_pad.pressed(LogitechButtonID.ONE)) {
       trace("The X button of the Logitech controller is pressed.");
